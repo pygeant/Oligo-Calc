@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>OligoCalc Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0f1a;--bg2:#0f172a;--bg3:#080d16;--bg4:#0c1422;
+  --border:#1e293b;--border2:#334155;
+  --text:#e2e8f0;--text2:#cbd5e1;--text3:#94a3b8;--text4:#64748b;--text5:#475569;
+  --accent:#38bdf8;--accent2:#818cf8;
+  --dna:#4ade80;--rna:#60a5fa;
+  --purple:#c084fc;--purple2:#a78bfa;--purple3:#7c3aed;
+  --orange:#f59e0b;--red:#f87171;
+  --header-bg:#0a0f1a;
+}
+body.light{
+  --bg:#f0f4f8;--bg2:#ffffff;--bg3:#e8edf3;--bg4:#dde3eb;
+  --border:#cbd5e1;--border2:#94a3b8;
+  --text:#0f172a;--text2:#1e293b;--text3:#334155;--text4:#475569;--text5:#64748b;
+  --accent:#0284c7;--accent2:#6366f1;
+  --dna:#16a34a;--rna:#2563eb;
+  --purple:#7c3aed;--purple2:#6d28d9;--purple3:#5b21b6;
+  --orange:#d97706;--red:#dc2626;
+  --header-bg:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Mono','Courier New',monospace;min-height:100vh;font-size:14px;transition:background 0.2s,color 0.2s}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+/* Header */
+#header{border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;background:var(--header-bg);z-index:100}
+#header-bar{width:6px;height:28px;background:linear-gradient(to bottom,var(--accent),var(--accent2));flex-shrink:0}
+#header-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.5px;color:var(--text)}
+#header-sub{font-size:10px;color:var(--text5);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+#header-actions{margin-left:auto;display:flex;gap:6px;flex-shrink:0}
+/* Tabs */
+#tabs{border-bottom:1px solid var(--border);display:flex;overflow-x:auto;background:var(--header-bg);position:sticky;top:57px;z-index:99}
+.tab-btn{background:none;border:none;cursor:pointer;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text4);border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn:hover{color:var(--text3)}
+/* Content */
+#content{padding:20px 16px;max-width:900px}
+/* Buttons */
+.btn-primary{background:var(--accent);color:var(--bg);border:none;padding:10px 20px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:1px;cursor:pointer;text-transform:uppercase;transition:all 0.15s;touch-action:manipulation}
+.btn-primary:active{opacity:0.85}
+.btn-sec{background:transparent;color:var(--text3);border:1px solid var(--border2);padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.15s;touch-action:manipulation}
+.btn-sec:active{border-color:var(--text4);color:var(--text)}
+.btn-danger{background:transparent;color:var(--red);border:1px solid var(--red);opacity:0.7;padding:6px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;touch-action:manipulation}
+.btn-danger:active{opacity:1}
+.btn-small{padding:5px 10px;font-size:11px}
+.btn-green{background:transparent;color:var(--dna);border:1px solid var(--dna);opacity:0.8;padding:8px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.15s;touch-action:manipulation}
+.btn-green:active,.btn-green:hover{opacity:1;background:var(--bg2)}
+/* Fields */
+.field-group{margin-bottom:14px}
+.field-label{display:block;font-size:10px;color:var(--text4);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.field-input{width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:13px;transition:border 0.2s;-webkit-appearance:none;border-radius:0}
+.field-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(56,189,248,0.12)}
+select.field-input{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px;color:var(--text)}
+textarea.field-input{resize:vertical;min-height:100px}
+/* Stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+@media(min-width:480px){.stat-grid{grid-template-columns:repeat(3,1fr)}}
+.stat-box{background:var(--bg2);border:1px solid var(--border);padding:14px 16px}
+.stat-val{font-size:20px;font-weight:600;color:var(--accent)}
+.stat-lbl{font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase;margin-top:4px}
+.stat-unit{color:var(--border2)}
+/* Token badges */
+.token-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:12px;background:var(--bg2);border:1px solid var(--border);margin-bottom:16px}
+.token-badge{display:inline-block;padding:4px 8px;font-size:11px;border-radius:2px;font-weight:500}
+/* DB table */
+.db-table{border:1px solid var(--border);overflow-x:auto}
+.db-header{display:grid;grid-template-columns:80px 1fr 80px 70px 70px;gap:6px;padding:10px 12px;background:var(--bg2);font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase}
+.db-row{display:grid;grid-template-columns:80px 1fr 80px 70px 70px;gap:6px;padding:10px 12px;border-top:1px solid var(--border);font-size:12px;align-items:center}
+.db-row:hover{background:var(--bg4)}
+.db-row:nth-child(even){background:var(--bg3)}
+.db-row:nth-child(even):hover{background:var(--bg4)}
+@media(max-width:400px){.db-header,.db-row{grid-template-columns:70px 1fr 70px 60px}}
+.badge-type{display:inline-block;padding:2px 6px;font-size:10px;border-radius:2px;background:var(--border);color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+/* Grid 2 cols */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:400px){.grid2{grid-template-columns:1fr}}
+/* Error / success */
+.error-msg{color:var(--red);font-size:12px;margin-top:8px}
+.success-msg{color:var(--dna);font-size:12px;margin-top:8px}
+/* Notes */
+.notes-box{padding:14px;background:var(--bg2);border:1px solid var(--border);font-size:11px;color:var(--text4);line-height:1.9}
+.info-code{color:var(--accent)}
+.section-label{font-size:10px;color:var(--text5);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.flex-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hidden{display:none!important}
+.check-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0}
+.check-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex-shrink:0;margin-top:2px}
+.search-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.color-row{display:flex;gap:8px;align-items:center}
+.color-row input[type=color]{width:42px;height:38px;border:1px solid var(--border);background:none;cursor:pointer;padding:2px;border-radius:0}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mb8{margin-bottom:8px}.mb16{margin-bottom:16px}
+/* DNA/RNA toggle */
+.series-toggle{display:flex;gap:0;border:1px solid var(--border2);overflow:hidden;border-radius:2px}
+.series-btn{background:transparent;border:none;cursor:pointer;padding:8px 18px;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;letter-spacing:1.5px;color:var(--text4);transition:all 0.15s;touch-action:manipulation;text-transform:uppercase}
+.series-btn.active-dna{background:color-mix(in srgb,var(--dna) 15%,transparent);color:var(--dna);border-right:1px solid var(--border2)}
+.series-btn.active-rna{background:color-mix(in srgb,var(--rna) 15%,transparent);color:var(--rna)}
+.series-btn:not(.active-dna):not(.active-rna):hover{color:var(--text3);background:var(--bg2)}
+.series-indicator{display:inline-block;padding:2px 8px;font-size:10px;letter-spacing:1px;border-radius:2px;font-weight:600;text-transform:uppercase}
+.series-dna{background:color-mix(in srgb,var(--dna) 15%,transparent);color:var(--dna);border:1px solid color-mix(in srgb,var(--dna) 30%,transparent)}
+.series-rna{background:color-mix(in srgb,var(--rna) 15%,transparent);color:var(--rna);border:1px solid color-mix(in srgb,var(--rna) 30%,transparent)}
+/* WXYZ placeholder panel */
+#wxyz-panel{background:var(--bg2);border:1px solid color-mix(in srgb,var(--purple3) 30%,transparent);padding:12px 14px;margin-bottom:14px;border-left:3px solid var(--purple3)}
+.wxyz-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.wxyz-row:last-child{margin-bottom:0}
+.wxyz-letter{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:color-mix(in srgb,var(--purple3) 20%,transparent);color:var(--purple2);font-weight:700;font-size:14px;border:1px solid color-mix(in srgb,var(--purple3) 35%,transparent);border-radius:2px;flex-shrink:0}
+.wxyz-select{background:var(--bg);border:1px solid var(--border2);color:var(--text);padding:6px 28px 6px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;cursor:pointer;flex:1;min-width:160px;-webkit-appearance:none;border-radius:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.wxyz-select:focus{outline:none;border-color:var(--purple3)}
+.wxyz-mw{font-size:11px;color:var(--text4);white-space:nowrap}
+.wxyz-label{font-size:10px;color:var(--purple3);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+/* 5' end toggle */
+.end5-toggle{display:flex;gap:0;border:1px solid var(--border2);overflow:hidden;border-radius:2px}
+.end5-btn{background:transparent;border:none;cursor:pointer;padding:7px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:0.8px;color:var(--text4);transition:all 0.15s;touch-action:manipulation;white-space:nowrap}
+.end5-btn.active-oh{background:color-mix(in srgb,var(--dna) 15%,transparent);color:var(--dna);border-right:1px solid var(--border2)}
+.end5-btn.active-p{background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent)}
+/* DMT toggle */
+.dmt-toggle{display:flex;gap:0;border:1px solid var(--border2);overflow:hidden;border-radius:2px}
+.dmt-btn{background:transparent;border:none;cursor:pointer;padding:7px 14px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--text4);transition:all 0.15s;touch-action:manipulation;text-transform:uppercase;white-space:nowrap}
+.dmt-btn.active-on{background:color-mix(in srgb,var(--orange) 15%,transparent);color:var(--orange);border-right:1px solid var(--border2)}
+.dmt-btn.active-off{background:color-mix(in srgb,var(--text3) 15%,transparent);color:var(--text3)}
+/* Batch table */
+.batch-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:12px}
+.batch-table th{background:var(--bg2);color:var(--text5);font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.batch-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2)}
+.batch-table tr:hover td{background:var(--bg4)}
+.batch-table tr.batch-err td{color:var(--red)}
+.batch-table tr.batch-err td:first-child::before{content:"⚠ "}
+.batch-scroll{overflow-x:auto;border:1px solid var(--border)}
+.batch-name{color:var(--text3);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.batch-seq{color:var(--text5);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.mw-val{color:var(--accent);font-weight:600}
+.dmt-val{color:var(--orange)}
+/* Drop zone */
+.drop-zone{border:2px dashed var(--border2);padding:32px 20px;text-align:center;color:var(--text5);font-size:12px;cursor:pointer;transition:all 0.2s;position:relative}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+/* Paste area */
+.paste-area{background:var(--bg2);border:1px solid var(--border);padding:12px;font-size:11px;color:var(--text4);line-height:2}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div id="header">
+  <div id="header-bar"></div>
+  <div>
+    <div id="header-title">OligoCalc Pro</div>
+    <div id="header-sub">Oligonucléotides modifiés</div>
+  </div>
+  <div id="header-actions">
+    <button id="theme-btn" class="btn-sec" onclick="toggleTheme()" style="font-size:16px;padding:5px 10px;line-height:1" title="Thème clair/sombre">☀️</button>
+    <button class="btn-sec" onclick="exportDB()" style="font-size:11px;padding:6px 10px">↓ DB</button>
+    <label class="btn-sec" style="cursor:pointer;font-size:11px;padding:6px 10px">
+      ↑ DB
+      <input type="file" accept=".json" style="display:none" onchange="importDB(event)"/>
+    </label>
+  </div>
+</div>
+
+<!-- TABS -->
+<div id="tabs">
+  <button class="tab-btn active" onclick="showTab('calc',this)">Calculateur</button>
+  <button class="tab-btn" onclick="showTab('batch',this)">Batch</button>
+  <button class="tab-btn" onclick="showTab('db',this)">Base de données</button>
+  <button class="tab-btn" onclick="showTab('add',this)">+ Ajouter</button>
+  <span style="margin-left:auto;display:flex;align-items:center;padding:0 12px;font-size:10px;color:var(--text5);white-space:nowrap">
+    <span id="mod-count"></span> mods
+  </span>
+</div>
+
+<div id="content">
+
+  <!-- ── TAB CALC ─────────────────────────────────────────────── -->
+  <div id="tab-calc">
+    <!-- Toggles row -->
+    <div class="flex-row mb16" style="gap:16px;flex-wrap:wrap">
+      <!-- DNA/RNA -->
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">Série :</span>
+        <div class="series-toggle">
+          <button id="btn-dna" class="series-btn active-dna" onclick="setSeries('dna')">ADN</button>
+          <button id="btn-rna" class="series-btn" onclick="setSeries('rna')">ARN</button>
+        </div>
+        <span id="series-hint" class="series-indicator series-dna">A→dA T→dT G→dG C→dC</span>
+      </div>
+      <!-- DMT -->
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">DMT :</span>
+        <div class="dmt-toggle">
+          <button id="dmt-on" class="dmt-btn active-on" onclick="setDMT('on')">DMT-on +303</button>
+          <button id="dmt-off" class="dmt-btn" onclick="setDMT('off')">DMT-off</button>
+        </div>
+      </div>
+      <!-- 5' end -->
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">5' :</span>
+        <div class="end5-toggle">
+          <button id="end5-oh" class="end5-btn active-oh" onclick="setEnd5('oh')">5'-OH</button>
+          <button id="end5-p" class="end5-btn" onclick="setEnd5('p')">5'-Phos</button>
+        </div>
+        <span id="end5-hint" style="font-size:10px;color:var(--text4)">−HPO₃ (−79.98)</span>
+      </div>
+    </div>
+
+    <div class="section-label">Séquence</div>
+    <div style="font-size:11px;color:var(--text5);margin-bottom:10px;line-height:1.9">
+      Bases en clair : <span class="info-code">A T G C</span> (série active ci-dessus)<br>
+      Modificateurs : <span class="info-code">[2OMe]</span> ou <span class="info-code">(2OMe)</span> — crochets ou parenthèses<br>
+      Phosphorothioate : <span class="info-code">A*T*G*C</span> — le <code style="color:var(--orange)">*</code> entre deux bases = PS<br>
+      Ex. : <span style="color:var(--text3)">[5Phos]A*T*(2OMe)G*(LNA)C*A[3Biotin]</span>
+    </div>
+    <textarea id="seq-input" class="field-input" rows="4" placeholder="Ex: [5Phos]A*T*(2OMe)G*(LNA)C*A[3Biotin] — W X Y Z acceptés" spellcheck="false" autocorrect="off" autocapitalize="off" oninput="detectWXYZ()"></textarea>
+
+    <!-- WXYZ dynamic panel -->
+    <div id="wxyz-panel" class="hidden">
+      <div class="wxyz-label">
+        <span style="width:8px;height:8px;border-radius:50%;background:#7c3aed;display:inline-block"></span>
+        Placeholders détectés — associer à une modification
+      </div>
+      <div id="wxyz-rows"></div>
+    </div>
+    <div id="seq-error" class="error-msg hidden"></div>
+    <div class="flex-row mt8">
+      <button class="btn-primary" onclick="calculate()">Calculer</button>
+      <button class="btn-sec" onclick="clearCalc()">Effacer</button>
+      <span id="token-count" style="font-size:11px;color:var(--text5)"></span>
+    </div>
+
+    <div id="tokens-section" class="hidden mt16">
+      <div class="section-label">Tokens parsés</div>
+      <div id="tokens-wrap" class="token-wrap"></div>
+    </div>
+
+    <div id="results-section" class="hidden mt16">
+      <div class="section-label">Résultats</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="res-mw">—</div>
+          <div class="stat-lbl">MW DMT-off <span class="stat-unit">· g/mol</span></div>
+        </div>
+        <div class="stat-box" id="box-dmt">
+          <div class="stat-val" id="res-mw-dmt" style="color:var(--orange)">—</div>
+          <div class="stat-lbl">MW DMT-on <span class="stat-unit">· g/mol</span></div>
+        </div>
+        <div class="stat-box"><div class="stat-val" id="res-nt">—</div><div class="stat-lbl">Longueur <span class="stat-unit">· nt</span></div></div>
+        <div class="stat-box"><div class="stat-val" id="res-gc">—</div><div class="stat-lbl">GC%</div></div>
+        <div class="stat-box"><div class="stat-val" id="res-eps">—</div><div class="stat-lbl">ε 260nm <span class="stat-unit">· M⁻¹cm⁻¹</span></div></div>
+        <div class="stat-box"><div class="stat-val" id="res-tm">—</div><div class="stat-lbl">Tm <span class="stat-unit" id="res-tm-method"></span></div></div>
+      </div>
+      <div class="notes-box">
+        <strong style="color:var(--text3);display:block;margin-bottom:6px;font-size:10px;letter-spacing:1px">NOTES DE CALCUL</strong>
+        • Masses en base de données = <strong style="color:var(--text3)">nucléoside pur</strong> (sans phosphate)<br>
+        • MW = Σ(nucléosides) + (n−1)×61.964 [5'-OH] ou + HPO₃(79.98) [5'-Phos]<br>
+        &nbsp;&nbsp;→ <strong style="color:var(--dna)">5'-OH</strong> : n−1 ponts phosphodiester, pas de phosphate terminal<br>
+        &nbsp;&nbsp;→ <strong style="color:var(--accent)">5'-Phos</strong> : +HPO₃ en 5' (ou [5Phos] dans la séquence)<br>
+        • Modificateurs <strong style="color:var(--purple2)">Δ</strong> : masse ajoutée directement (pas de phosphate, pas d'eau)<br>
+        • DMT-on : +303.03 g/mol (diméthoxytrityle en 5')<br>
+        • ε₂₆₀ = Σ ε des nucléosides × 0.9 (correction hyperchromicité, DNA/RNA distincts, modifications 2'-OMe/2'-F/LNA = même ε que parent)<br>
+        • Tm : Wallace (≤20 nt) ou Marmur-Doty (>20 nt)
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB BATCH ───────────────────────────────────────────── -->
+  <div id="tab-batch" class="hidden">
+    <!-- Options batch -->
+    <div class="flex-row mb16" style="gap:16px;flex-wrap:wrap">
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">Série :</span>
+        <div class="series-toggle">
+          <button id="btn-dna-b" class="series-btn active-dna" onclick="setSeries('dna')">ADN</button>
+          <button id="btn-rna-b" class="series-btn" onclick="setSeries('rna')">ARN</button>
+        </div>
+      </div>
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">DMT :</span>
+        <div class="dmt-toggle">
+          <button id="dmt-on-b" class="dmt-btn active-on" onclick="setDMT('on')">DMT-on</button>
+          <button id="dmt-off-b" class="dmt-btn" onclick="setDMT('off')">DMT-off</button>
+        </div>
+      </div>
+      <div class="flex-row" style="gap:8px">
+        <span style="font-size:10px;color:var(--text5);letter-spacing:1px;text-transform:uppercase">5' :</span>
+        <div class="end5-toggle">
+          <button id="end5-oh-b" class="end5-btn active-oh" onclick="setEnd5('oh')">5'-OH</button>
+          <button id="end5-p-b" class="end5-btn" onclick="setEnd5('p')">5'-Phos</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Import Excel/CSV -->
+    <div class="section-label">Import fichier (Excel / CSV / TSV)</div>
+    <div class="drop-zone" id="drop-zone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)">
+      <input type="file" accept=".xlsx,.xls,.csv,.tsv,.txt" onchange="loadBatchFile(event)"/>
+      <div style="font-size:24px;margin-bottom:8px">📂</div>
+      <div style="font-weight:600;color:var(--text3);margin-bottom:4px">Déposer un fichier ici</div>
+      <div style="font-size:11px">Excel (.xlsx/.xls) · CSV · TSV · ou cliquer pour choisir</div>
+      <div style="font-size:10px;margin-top:8px;color:#334155">Format : colonne A = nom (optionnel), colonne B = séquence<br>Ou colonne A = séquence seule</div>
+    </div>
+
+    <!-- Ou saisie manuelle -->
+    <div style="margin:16px 0 8px;font-size:10px;color:var(--text5);letter-spacing:2px;text-transform:uppercase">Ou saisie manuelle (une séquence par ligne)</div>
+    <div style="font-size:11px;color:var(--text5);margin-bottom:8px">Format : <span class="info-code">nom TAB séquence</span> &nbsp;ou&nbsp; <span class="info-code">séquence seule</span></div>
+    <textarea id="batch-input" class="field-input" rows="6" placeholder="oligo1&#9;ATGC*ATGC*(2OMe)A&#10;oligo2&#9;(Aom)*(A2f)*(Gom)(Uom)&#10;ATGCATGC" spellcheck="false" autocorrect="off" autocapitalize="off"></textarea>
+
+    <div class="flex-row mt8">
+      <button class="btn-primary" onclick="runBatch()">Calculer tout</button>
+      <button class="btn-sec" onclick="document.getElementById('batch-input').value='';clearBatchResults()">Effacer</button>
+    </div>
+
+    <!-- Résultats batch -->
+    <div id="batch-results" class="hidden mt16">
+      <div class="flex-row mb16" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <div class="section-label" style="margin-bottom:0" id="batch-summary"></div>
+        <div class="flex-row" style="gap:6px">
+          <button class="btn-green" onclick="exportBatchCSV()">↓ CSV</button>
+          <button class="btn-sec" onclick="copyBatchTable()">⧉ Copier</button>
+        </div>
+      </div>
+      <div class="batch-scroll">
+        <table class="batch-table" id="batch-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nom</th>
+              <th>Séquence</th>
+              <th>nt</th>
+              <th>MW off (g/mol)</th>
+              <th id="th-dmt">MW on (g/mol)</th>
+              <th>GC%</th>
+              <th>ε 260nm</th>
+              <th>Tm (°C)</th>
+            </tr>
+          </thead>
+          <tbody id="batch-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TAB DB ──────────────────────────────────────────────── -->
+  <div id="tab-db" class="hidden">
+    <div class="search-bar">
+      <input class="field-input" style="width:200px" placeholder="Rechercher..." id="db-search" oninput="renderDB()" autocorrect="off" autocapitalize="off"/>
+      <select class="field-input" style="width:140px" id="db-filter" onchange="renderDB()">
+        <option value="all">Tous les types</option>
+      </select>
+      <span id="db-count" style="font-size:11px;color:var(--text5)"></span>
+      <button class="btn-primary" style="margin-left:auto" onclick="openAddTab()">+ Nouveau</button>
+    </div>
+    <div class="db-table">
+      <div class="db-header"><div>ID</div><div>Nom</div><div>MW</div><div>Type</div><div>Actions</div></div>
+      <div id="db-rows"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB ADD ─────────────────────────────────────────────── -->
+  <div id="tab-add" class="hidden">
+    <div id="add-title" style="font-size:12px;color:var(--text4);margin-bottom:16px">Ajouter une nouvelle modification</div>
+    <div class="grid2">
+      <div class="field-group">
+        <label class="field-label">Identifiant (clé)</label>
+        <input class="field-input" id="f-id" placeholder="Ex: 2OMe, ps, 5Cy3" autocorrect="off" autocapitalize="off"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Nom complet</label>
+        <input class="field-input" id="f-name" placeholder="Ex: 2'-O-Méthyle"/>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field-group">
+        <label class="field-label">Masse molaire (g/mol)</label>
+        <input class="field-input" id="f-mw" type="number" step="any" placeholder="Ex: 14.02"/>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Formule chimique</label>
+        <input class="field-input" id="f-formula" placeholder="Ex: CH2" autocorrect="off"/>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field-group">
+        <label class="field-label">Type</label>
+        <select class="field-input" id="f-type">
+          <option value="standard">standard</option>
+          <option value="backbone">backbone</option>
+          <option value="sugar">sugar</option>
+          <option value="conjugate">conjugate</option>
+          <option value="custom" selected>custom</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Couleur</label>
+        <div class="color-row">
+          <input type="color" id="f-color" value="#94a3b8" oninput="document.getElementById('f-color-txt').value=this.value"/>
+          <input class="field-input" id="f-color-txt" value="#94a3b8" oninput="syncColor(this.value)" style="flex:1"/>
+        </div>
+      </div>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="f-delta"/>
+      <label for="f-delta" style="font-size:12px;color:var(--text3);cursor:pointer">
+        <strong style="color:var(--purple2)">Mode delta (Δ)</strong> — ajoute la MW directement sans soustraction d'eau<br>
+        <span style="color:var(--text4);font-size:11px">Pour modifications non-nucléotidiques (PS, 2'-OMe, fluorophores…)</span>
+      </label>
+    </div>
+    <div id="add-error" class="error-msg hidden"></div>
+    <div class="flex-row mt16">
+      <button class="btn-primary" onclick="saveMod()">Enregistrer</button>
+      <button class="btn-sec" onclick="showTab('db',null);renderDB()">Annuler</button>
+    </div>
+    <div class="notes-box mt20">
+      <strong style="color:var(--text3);display:block;margin-bottom:6px;font-size:10px;letter-spacing:1px">CONVENTION DES MASSES EN BASE DE DONNÉES</strong>
+      Les masses sont saisies en tant que <strong style="color:var(--text3)">nucléosides purs</strong> (sans phosphate) :<br>
+      &nbsp;&nbsp;MW = nucléoside seul (base + sucre + OH en 3' et 5')<br>
+      &nbsp;&nbsp;Exemples : dA = 251.245 · dT = 242.231 · rA = 267.244 · rU = 244.201<br>
+      &nbsp;&nbsp;Le(s) phosphate(s) sont ajoutés automatiquement au moment du calcul.<br><br>
+      <strong style="color:var(--text3)">MW directe</strong> : pour tout nucléotide (modifié ou non) portant son phosphate. L'eau est soustraite à chaque liaison lors du calcul. La correction 5'-OH est appliquée globalement.<br><br>
+      <strong style="color:var(--purple2)">Mode delta (Δ)</strong> : pour les modifications qui s'ajoutent <em>sur</em> un nucléotide existant (2'-OMe, PS, LNA…) ou les conjugués terminaux (fluorophores, biotine…). La MW est la différence de masse, ajoutée directement sans soustraction d'eau ni correction phosphate.
+    </div>
+  </div>
+
+</div>
+
+<!-- SheetJS pour lire Excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+// ── DEFAULT DB ────────────────────────────────────────────────────────────────
+const DEFAULT_MODS = {
+  // ── DNA standard (masses nucléoside, sans phosphate) ──────────────────────
+  "dA":{"name":"Désoxyadenosine","mw":251.245,"formula":"C10H13N5O3","type":"standard","color":"#4ade80"},
+  "dT":{"name":"Désoxythymidine","mw":242.231,"formula":"C10H14N2O5","type":"standard","color":"#4ade80"},
+  "dG":{"name":"Désoxyguanosine","mw":267.243,"formula":"C10H13N5O4","type":"standard","color":"#4ade80"},
+  "dC":{"name":"Désoxycytidine","mw":227.219,"formula":"C9H13N3O4","type":"standard","color":"#4ade80"},
+  // ── RNA standard ───────────────────────────────────────────────────────────
+  "rA":{"name":"Adénosine","mw":267.244,"formula":"C10H13N5O4","type":"standard","color":"#60a5fa"},
+  "rU":{"name":"Uridine","mw":244.201,"formula":"C9H12N2O6","type":"standard","color":"#60a5fa"},
+  "rG":{"name":"Guanosine","mw":283.243,"formula":"C10H13N5O5","type":"standard","color":"#60a5fa"},
+  "rC":{"name":"Cytidine","mw":243.219,"formula":"C9H13N3O5","type":"standard","color":"#60a5fa"},
+  // ── RNA 2'-OMe (nucléoside +14.016) ───────────────────────────────────────
+  "Aom":{"name":"Adénosine 2\'-OMe","mw":281.260,"formula":"C11H15N5O4","type":"sugar","color":"#c084fc"},
+  "Uom":{"name":"Uridine 2\'-OMe","mw":258.217,"formula":"C10H14N2O6","type":"sugar","color":"#c084fc"},
+  "Gom":{"name":"Guanosine 2\'-OMe","mw":297.259,"formula":"C11H15N5O5","type":"sugar","color":"#c084fc"},
+  "Com":{"name":"Cytidine 2\'-OMe","mw":257.235,"formula":"C10H15N3O5","type":"sugar","color":"#c084fc"},
+  // ── RNA 2\'-Fluoro (nucléoside +1.995) ────────────────────────────────────
+  "A2f":{"name":"Adénosine 2\'-F","mw":269.239,"formula":"C10H12FN5O3","type":"sugar","color":"#38bdf8"},
+  "U2f":{"name":"Uridine 2\'-F","mw":246.196,"formula":"C9H11FN2O5","type":"sugar","color":"#38bdf8"},
+  "G2f":{"name":"Guanosine 2\'-F","mw":285.238,"formula":"C10H12FN5O4","type":"sugar","color":"#38bdf8"},
+  "C2f":{"name":"Cytidine 2\'-F","mw":245.214,"formula":"C9H12FN3O4","type":"sugar","color":"#38bdf8"},
+  "ps":{"name":"Phosphorothioate","mw":16.06,"delta":true,"formula":"S/O swap","type":"backbone","color":"#f59e0b"},
+  "po":{"name":"Phosphodiester","mw":0,"delta":true,"formula":"normal","type":"backbone","color":"#f59e0b"},
+  "pMe":{"name":"Méthylphosphonate","mw":14.02,"delta":true,"formula":"CH2/O","type":"backbone","color":"#f59e0b"},
+  "2OMe":{"name":"2'-O-Méthyle","mw":14.02,"delta":true,"formula":"+CH2","type":"sugar","color":"#c084fc"},
+  "2F":{"name":"2'-Fluoro","mw":2.0,"delta":true,"formula":"+F-OH","type":"sugar","color":"#c084fc"},
+  "LNA":{"name":"LNA (Locked)","mw":28.01,"delta":true,"formula":"+CH2O","type":"sugar","color":"#c084fc"},
+  "MOE":{"name":"2'-MOE","mw":58.08,"delta":true,"formula":"+C3H6O2","type":"sugar","color":"#c084fc"},
+  "cEt":{"name":"cEt (S-cEt)","mw":40.06,"delta":true,"formula":"+C2H4O","type":"sugar","color":"#c084fc"},
+  "5Cy3":{"name":"Cy3 5'","mw":767.0,"delta":true,"formula":"Cy3","type":"conjugate","color":"#f87171"},
+  "5Cy5":{"name":"Cy5 5'","mw":791.0,"delta":true,"formula":"Cy5","type":"conjugate","color":"#f87171"},
+  "5FAM":{"name":"FAM 5'","mw":473.4,"delta":true,"formula":"C21H11O8","type":"conjugate","color":"#f87171"},
+  "3Biotin":{"name":"Biotine 3'","mw":414.5,"delta":true,"formula":"Biotine","type":"conjugate","color":"#f87171"},
+  "5NH2":{"name":"Amine 5'","mw":16.02,"delta":true,"formula":"NH2","type":"conjugate","color":"#f87171"},
+  "3NH2":{"name":"Amine 3'","mw":16.02,"delta":true,"formula":"NH2","type":"conjugate","color":"#f87171"},
+  "5Phos":{"name":"Phosphate 5'","mw":79.979,"delta":true,"formula":"PO4","type":"conjugate","color":"#f87171"},
+  "3Phos":{"name":"Phosphate 3'","mw":79.979,"delta":true,"formula":"PO4","type":"conjugate","color":"#f87171"},
+};
+
+// Extinction coefficients ε₂₆₀ (M⁻¹cm⁻¹) par nucléoside
+// Les modifications 2'-OMe, 2'-F, LNA etc. n'affectent pas le chromophore
+// → on mappe chaque token vers son nucléoside parent pour récupérer ε
+const EXTINCTION_BASE = {
+  "dA":15200, "dT":8400,  "dG":12010, "dC":7050,
+  "rA":15400, "rU":9900,  "rG":11500, "rC":7200,
+};
+// Mapping token → clé EXTINCTION_BASE (pour ε) et base canonique (pour GC%, Tm)
+const EXTINCTION_MAP = {
+  "dA":"dA","dT":"dT","dG":"dG","dC":"dC",
+  "rA":"rA","rU":"rU","rG":"rG","rC":"rC",
+  "Aom":"rA","Uom":"rU","Gom":"rG","Com":"rC",
+  "A2f":"rA","U2f":"rU","G2f":"rG","C2f":"rC",
+};
+// Base canonique (A/T/G/C/U) pour GC% et Tm
+const BASE_IDENTITY = {
+  "dA":"A","dT":"T","dG":"G","dC":"C",
+  "rA":"A","rU":"U","rG":"G","rC":"C",
+  "Aom":"A","Uom":"U","Gom":"G","Com":"C",
+  "A2f":"A","U2f":"U","G2f":"G","C2f":"C",
+};
+function getBaseIdentity(token){
+  if(BASE_IDENTITY[token]) return BASE_IDENTITY[token];
+  // Fallback: cherche A/G/C/T/U dans le token (ex: LNA_G → G)
+  const upper = token.toUpperCase();
+  for(const b of ["G","C","A","T","U"]){ if(upper.includes(b)) return b; }
+  return null;
+}
+function getEpsilon(token){
+  const key = EXTINCTION_MAP[token];
+  if(key) return EXTINCTION_BASE[key];
+  const b = getBaseIdentity(token);
+  if(b==="A") return EXTINCTION_BASE["rA"];
+  if(b==="G") return EXTINCTION_BASE["rG"];
+  if(b==="C") return EXTINCTION_BASE["rC"];
+  if(b==="T") return EXTINCTION_BASE["dT"];
+  if(b==="U") return EXTINCTION_BASE["rU"];
+  return 0;
+}
+const DMT_MW = 303.03;
+
+let editingId = null;
+let series = "dna";
+let dmtMode = "on"; // "on" | "off"
+let batchData = []; // store last batch results for export
+
+// ── LOAD / SAVE MODS ─────────────────────────────────────────────────────────
+function loadMods(){
+  try{const s=localStorage.getItem("oligo_mods");return s?{...DEFAULT_MODS,...JSON.parse(s)}:{...DEFAULT_MODS};}
+  catch{return{...DEFAULT_MODS};}
+}
+let mods=loadMods();
+
+function saveMods(){
+  const custom={};
+  for(const[id,mod]of Object.entries(mods)){
+    if(!DEFAULT_MODS[id]||JSON.stringify(mod)!==JSON.stringify(DEFAULT_MODS[id]))custom[id]=mod;
+  }
+  try{localStorage.setItem("oligo_mods",JSON.stringify(custom));}catch{}
+  document.getElementById("mod-count").textContent=Object.keys(mods).length;
+}
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+const TAB_IDS=["calc","batch","db","add"];
+function showTab(id,btn){
+  TAB_IDS.forEach(t=>document.getElementById("tab-"+t).classList.toggle("hidden",t!==id));
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  if(btn)btn.classList.add("active");
+  else document.querySelectorAll(".tab-btn")[TAB_IDS.indexOf(id)].classList.add("active");
+  if(id==="db")renderDB();
+}
+
+function openAddTab(){
+  editingId=null;
+  document.getElementById("add-title").textContent="Ajouter une nouvelle modification";
+  document.getElementById("f-id").disabled=false;
+  ["f-id","f-name","f-mw","f-formula"].forEach(f=>document.getElementById(f).value="");
+  document.getElementById("f-type").value="custom";
+  document.getElementById("f-delta").checked=false;
+  setColor("#94a3b8");
+  document.getElementById("add-error").classList.add("hidden");
+  showTab("add",null);
+}
+
+// ── SERIES & DMT TOGGLES ──────────────────────────────────────────────────────
+function setSeries(s){
+  series=s;
+  ["","b"].forEach(sfx=>{
+    const dn=document.getElementById("btn-dna"+( sfx?"-"+sfx:""));
+    const rn=document.getElementById("btn-rna"+( sfx?"-"+sfx:""));
+    if(!dn||!rn)return;
+    dn.className="series-btn"+(s==="dna"?" active-dna":"");
+    rn.className="series-btn"+(s==="rna"?" active-rna":"");
+  });
+  const hint=document.getElementById("series-hint");
+  if(hint){
+    if(s==="dna"){hint.className="series-indicator series-dna";hint.textContent="A→dA T→dT G→dG C→dC";}
+    else{hint.className="series-indicator series-rna";hint.textContent="A→rA U→rU G→rG C→rC";}
+  }
+}
+
+function setDMT(mode){
+  dmtMode=mode;
+  // update all DMT buttons (calc + batch tabs)
+  ["","b"].forEach(sfx=>{
+    const on=document.getElementById("dmt-on"+(sfx?"-"+sfx:""));
+    const off=document.getElementById("dmt-off"+(sfx?"-"+sfx:""));
+    if(!on||!off)return;
+    on.className="dmt-btn"+(mode==="on"?" active-on":"");
+    off.className="dmt-btn"+(mode==="off"?" active-off":"");
+  });
+  // update batch table header
+  const th=document.getElementById("th-dmt");
+  if(th)th.textContent=mode==="on"?"MW on (g/mol)":"MW on (g/mol)";
+}
+
+// ── BASE KEY ─────────────────────────────────────────────────────────────────
+function baseKey(ch){
+  if(series==="dna"){
+    if(ch==="A")return"dA";if(ch==="T")return"dT";if(ch==="G")return"dG";if(ch==="C")return"dC";
+  }else{
+    if(ch==="A")return"rA";if(ch==="U")return"rU";if(ch==="G")return"rG";if(ch==="C")return"rC";
+    if(ch==="T")return"rU";
+  }
+  return null;
+}
+
+// ── 5' END TOGGLE ────────────────────────────────────────────────────────────
+function setEnd5(mode){
+  end5Mode = mode;
+  const suffixes = ["","b"];
+  suffixes.forEach(sfx=>{
+    const oh = document.getElementById("end5-oh"+(sfx?"-"+sfx:""));
+    const p  = document.getElementById("end5-p" +(sfx?"-"+sfx:""));
+    if(!oh||!p) return;
+    oh.className = "end5-btn"+(mode==="oh"?" active-oh":"");
+    p.className  = "end5-btn"+(mode==="p" ?" active-p":"");
+  });
+  const hint = document.getElementById("end5-hint");
+  if(hint) hint.textContent = mode==="oh" ? "−HPO₃ (−79.98)" : "pas de correction";
+}
+
+// ── WXYZ PLACEHOLDERS ─────────────────────────────────────────────────────────
+const WXYZ_LETTERS = ["W","X","Y","Z"];
+// Persisted last choices per letter
+let wxyzChoices = {};
+let end5Mode = "oh"; // "oh" = 5'-OH (subtract HPO3), "p" = 5'-phosphate (no correction)
+const HPO3   = 79.979;  // HPO3 = H3PO4 - H2O (phosphate group added per nucleoside)
+const BRIDGE = 61.964;  // H3PO4 - 2×H2O = phosphodiester bridge contribution per bond
+try{ wxyzChoices = JSON.parse(localStorage.getItem("oligo_wxyz")||"{}"); }catch{}
+
+function saveWXYZChoices(){
+  try{ localStorage.setItem("oligo_wxyz", JSON.stringify(wxyzChoices)); }catch{}
+}
+
+// Detect which of W X Y Z appear in the current sequence and show/hide panel
+function detectWXYZ(){
+  const seq = document.getElementById("seq-input").value;
+  // Find letters used as plain bases (not inside brackets/parens)
+  let plain = seq.replace(/\([^)]*\)/g,"").replace(/\[[^\]]*\]/g,"");
+  const found = WXYZ_LETTERS.filter(l => plain.toUpperCase().includes(l));
+  const panel = document.getElementById("wxyz-panel");
+  if(!found.length){ panel.classList.add("hidden"); return; }
+  panel.classList.remove("hidden");
+  renderWXYZRows(found);
+}
+
+function renderWXYZRows(found){
+  const container = document.getElementById("wxyz-rows");
+  container.innerHTML = "";
+  const modEntries = Object.entries(mods).sort((a,b)=>a[0].localeCompare(b[0]));
+
+  found.forEach(letter => {
+    const row = document.createElement("div");
+    row.className = "wxyz-row";
+
+    const lbl = document.createElement("span");
+    lbl.className = "wxyz-letter";
+    lbl.textContent = letter;
+
+    const sel = document.createElement("select");
+    sel.className = "wxyz-select";
+    sel.id = "wxyz-sel-"+letter;
+
+    // blank option
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "— choisir une modification —";
+    sel.appendChild(blank);
+
+    modEntries.forEach(([id, mod])=>{
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = id + " — " + mod.name + " (" + mod.mw + " g/mol)";
+      if(wxyzChoices[letter] === id) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    const mwSpan = document.createElement("span");
+    mwSpan.className = "wxyz-mw";
+    mwSpan.id = "wxyz-mw-"+letter;
+    if(wxyzChoices[letter] && mods[wxyzChoices[letter]]){
+      const m = mods[wxyzChoices[letter]];
+      mwSpan.textContent = m.mw + " g/mol";
+      mwSpan.style.color = m.color || "#94a3b8";
+    }
+
+    sel.addEventListener("change", ()=>{
+      const chosen = sel.value;
+      if(chosen){ wxyzChoices[letter] = chosen; }
+      else{ delete wxyzChoices[letter]; }
+      saveWXYZChoices();
+      // update MW hint
+      if(chosen && mods[chosen]){
+        const m = mods[chosen];
+        mwSpan.textContent = m.mw + " g/mol";
+        mwSpan.style.color = m.color || "#94a3b8";
+      } else {
+        mwSpan.textContent = "";
+      }
+    });
+
+    row.appendChild(lbl);
+    row.appendChild(sel);
+    row.appendChild(mwSpan);
+    container.appendChild(row);
+  });
+}
+
+// Get current WXYZ mapping (letter → mod id), or null if any needed letter is unmapped
+function getWXYZMap(seq){
+  let plain = seq.replace(/\([^)]*\)/g,"").replace(/\[[^\]]*\]/g,"");
+  const needed = WXYZ_LETTERS.filter(l => plain.toUpperCase().includes(l));
+  const map = {};
+  for(const l of needed){
+    if(!wxyzChoices[l]) return { error: `Le placeholder '${l}' n'est pas associé à une modification.` };
+    if(!mods[wxyzChoices[l]]) return { error: `Modification '${wxyzChoices[l]}' pour '${l}' introuvable dans la base.` };
+    map[l] = wxyzChoices[l];
+  }
+  return { map };
+}
+
+
+function parseSeq(raw, wxyzMap){
+  wxyzMap = wxyzMap || {};
+  const tokens=[];
+  let seq=raw.replace(/\(([^)]+)\)/g,"[$1]");
+  const re=/\[([^\]]+)\]/g;
+  let lastIdx=0,m;
+
+  const parsePlain=(seg)=>{
+    const parts=seg.split("*");
+    for(let i=0;i<parts.length;i++){
+      for(const ch of parts[i].toUpperCase()){
+        if(ch===" ")continue;
+        if(WXYZ_LETTERS.includes(ch)){
+          if(!wxyzMap[ch])return{error:`Le placeholder '${ch}' n\'est pas associé. Sélectionnez une modification ci-dessus.`};
+          tokens.push(wxyzMap[ch]);
+          continue;
+        }
+        const k=baseKey(ch);
+        if(!k)return{error:`Caractère inconnu: '${ch}'`};
+        tokens.push(k);
+      }
+      if(i<parts.length-1)tokens.push("ps");
+    }
+    return null;
+  };
+
+  while((m=re.exec(seq))!==null){
+    const plain=seq.slice(lastIdx,m.index);
+    if(plain){const err=parsePlain(plain);if(err)return err;}
+    tokens.push(m[1]);
+    lastIdx=m.index+m[0].length;
+  }
+  const trail=seq.slice(lastIdx);
+  if(trail){const err=parsePlain(trail);if(err)return err;}
+
+  const unknown=tokens.filter(t=>!mods[t]);
+  if(unknown.length)return{error:`Modificateurs inconnus : ${[...new Set(unknown)].join(", ")}`};
+  return{tokens};
+}
+
+// ── CALC CORE (returns object) ─────────────────────────────────────────────────
+function calcFromTokens(tokens){
+  let mw=0,nBases=0,gcCount=0;
+  const seqBases=[];
+  let has5Phos=false;
+  for(const t of tokens){
+    const mod=mods[t];
+    mw+=mod.mw;
+    if(!mod.delta){
+      nBases++;
+      const upper=getBaseIdentity(t)||t.slice(-1).toUpperCase();
+      seqBases.push(upper);
+      if(upper==="G"||upper==="C")gcCount++;
+    }
+    if(t==="5Phos") has5Phos=true;
+  }
+  if(nBases>0){
+    // Each phosphodiester bond contributes BRIDGE = H3PO4 - 2×H2O = 61.964 g/mol
+    // For 5\'-OH : (n-1) bonds, no phosphate on 5\' terminus
+    // For 5\'-Phos: (n-1) bonds + one HPO3 on 5\' end (or via explicit [5Phos] delta)
+    mw += (nBases - 1) * BRIDGE;
+    if(!has5Phos && end5Mode === "p") mw += HPO3;
+    // Note: 3\'-OH is already included in the nucleoside mass (free hydroxyl)
+  }
+  const mwDMT=mw+DMT_MW;
+  const gcPct=nBases>0?(gcCount/nBases*100).toFixed(1):"N/A";
+  let epsilon=0;tokens.forEach(t=>{if(!mods[t]?.delta) epsilon+=getEpsilon(t);});epsilon=Math.round(epsilon*0.9);
+  let tm="N/A",tmMethod="";
+  if(nBases>0){
+    const atCount=nBases-gcCount;
+    if(nBases<=20){tm=(gcCount*4+atCount*2).toFixed(1);tmMethod="Wallace";}
+    else{tm=(81.5+16.6*Math.log10(0.05)+0.41*(gcCount/nBases*100)-675/nBases).toFixed(1);tmMethod="Marmur-Doty";}
+  }
+  return{mw:mw.toFixed(2),mwDMT:mwDMT.toFixed(2),nBases,gcPct,epsilon,tm,tmMethod};
+}
+
+// ── SINGLE CALCULATE ──────────────────────────────────────────────────────────
+function calculate(){
+  const errEl=document.getElementById("seq-error");
+  errEl.classList.add("hidden");
+  document.getElementById("results-section").classList.add("hidden");
+  document.getElementById("tokens-section").classList.add("hidden");
+  document.getElementById("token-count").textContent="";
+
+  const seq=document.getElementById("seq-input").value.trim();
+  if(!seq){showError(errEl,"Entrez une séquence.");return;}
+  // resolve WXYZ
+  const{map:wxyzMap, error:wxyzErr} = getWXYZMap(seq);
+  if(wxyzErr){showError(errEl,wxyzErr);return;}
+  const{tokens,error}=parseSeq(seq, wxyzMap);
+  if(error){showError(errEl,error);return;}
+  if(!tokens.length){showError(errEl,"Séquence vide.");return;}
+
+  document.getElementById("token-count").textContent=tokens.length+" tokens";
+
+  const wrap=document.getElementById("tokens-wrap");
+  wrap.innerHTML="";
+  tokens.forEach(t=>{
+    const mod=mods[t];
+    const badge=document.createElement("span");
+    badge.className="token-badge";
+    if(t==="ps"){
+      badge.textContent="*";
+      badge.style.cssText="background:#f59e0b22;color:var(--orange);border:1px solid #f59e0b44;padding:4px 5px;font-size:13px;font-weight:700";
+    }else{
+      badge.textContent=t;
+      const c=mod?.color||"#334155";
+      badge.style.cssText=`background:${c}22;color:${c};border:1px solid ${c}44`;
+    }
+    wrap.appendChild(badge);
+  });
+  document.getElementById("tokens-section").classList.remove("hidden");
+
+  const r=calcFromTokens(tokens);
+  document.getElementById("res-mw").textContent=r.mw;
+  document.getElementById("res-mw-dmt").textContent=r.mwDMT;
+  document.getElementById("res-nt").textContent=r.nBases;
+  document.getElementById("res-gc").textContent=r.gcPct+(r.gcPct!=="N/A"?"%":"");
+  document.getElementById("res-eps").textContent=r.epsilon?r.epsilon.toLocaleString("fr-FR"):"N/A";
+  document.getElementById("res-tm").textContent=r.tm+(r.tm!=="N/A"?"°C":"");
+  document.getElementById("res-tm-method").textContent=r.tmMethod?"· "+r.tmMethod:"";
+  document.getElementById("results-section").classList.remove("hidden");
+}
+
+function clearCalc(){
+  document.getElementById("seq-input").value="";
+  document.getElementById("seq-error").classList.add("hidden");
+  document.getElementById("results-section").classList.add("hidden");
+  document.getElementById("tokens-section").classList.add("hidden");
+  document.getElementById("token-count").textContent="";
+  detectWXYZ();
+}
+
+function showError(el,msg){el.textContent="⚠ "+msg;el.classList.remove("hidden");}
+
+// ── BATCH ─────────────────────────────────────────────────────────────────────
+function parseBatchLines(text){
+  return text.split("\n").map(l=>l.trim()).filter(l=>l.length>0).map((l,i)=>{
+    // Try tab-separated: name\tseq, or just seq
+    const parts=l.split("\t");
+    let name,seq;
+    if(parts.length>=2){name=parts[0].trim();seq=parts[1].trim();}
+    else{name="oligo"+(i+1);seq=parts[0].trim();}
+    return{name,seq};
+  });
+}
+
+function runBatch(){
+  const text=document.getElementById("batch-input").value.trim();
+  if(!text){alert("Aucune séquence à calculer.");return;}
+  const lines=parseBatchLines(text);
+  processBatch(lines);
+}
+
+function processBatch(lines){
+  batchData=[];
+  const tbody=document.getElementById("batch-tbody");
+  tbody.innerHTML="";
+  let ok=0,err=0;
+
+  lines.forEach((row,i)=>{
+    const{name,seq}=row;
+    const tr=document.createElement("tr");
+    const{tokens,error}=parseSeq(seq, wxyzChoices);
+    if(error){
+      err++;
+      tr.className="batch-err";
+      tr.innerHTML=`<td>${i+1}</td><td class="batch-name">${esc(name)}</td><td colspan="7" style="color:var(--red);font-size:11px">${esc(error)}</td>`;
+      batchData.push({name,seq,error});
+    }else{
+      ok++;
+      const r=calcFromTokens(tokens);
+      batchData.push({name,seq,...r});
+      tr.innerHTML=`
+        <td style="color:var(--text5)">${i+1}</td>
+        <td class="batch-name" title="${esc(name)}">${esc(name)}</td>
+        <td class="batch-seq" title="${esc(seq)}">${esc(seq)}</td>
+        <td style="color:var(--text3)">${r.nBases}</td>
+        <td class="mw-val">${r.mw}</td>
+        <td class="dmt-val">${r.mwDMT}</td>
+        <td>${r.gcPct!=="N/A"?r.gcPct+"%":r.gcPct}</td>
+        <td>${r.epsilon?r.epsilon.toLocaleString("fr-FR"):"N/A"}</td>
+        <td>${r.tm!=="N/A"?r.tm+"°C":r.tm}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById("batch-summary").textContent=`${lines.length} séquences — ${ok} OK${err>0?" · "+err+" erreurs":""}`;
+  document.getElementById("batch-results").classList.remove("hidden");
+}
+
+function clearBatchResults(){
+  document.getElementById("batch-results").classList.add("hidden");
+  document.getElementById("batch-tbody").innerHTML="";
+  batchData=[];
+}
+
+// ── BATCH EXPORT CSV ──────────────────────────────────────────────────────────
+function exportBatchCSV(){
+  if(!batchData.length){alert("Aucun résultat à exporter.");return;}
+  const header=["Nom","Séquence","nt","MW DMT-off (g/mol)","MW DMT-on (g/mol)","GC%","ε 260nm","Tm (°C)","Méthode Tm"];
+  const rows=batchData.map(r=>{
+    if(r.error)return[r.name,r.seq,"ERREUR",r.error,"","","","",""];
+    return[r.name,r.seq,r.nBases,r.mw,r.mwDMT,r.gcPct!=="N/A"?r.gcPct+"%":r.gcPct,r.epsilon||"N/A",r.tm!=="N/A"?r.tm+"°C":r.tm,r.tmMethod||""];
+  });
+  const csv=[header,...rows].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(";")).join("\n");
+  const BOM="\uFEFF"; // UTF-8 BOM for Excel
+  const blob=new Blob([BOM+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="oligo_batch_results.csv";a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+// ── BATCH COPY TABLE ──────────────────────────────────────────────────────────
+function copyBatchTable(){
+  if(!batchData.length){alert("Aucun résultat.");return;}
+  const header=["Nom","Séquence","nt","MW DMT-off","MW DMT-on","GC%","ε 260nm","Tm","Méthode Tm"].join("\t");
+  const rows=batchData.map(r=>{
+    if(r.error)return[r.name,r.seq,"ERREUR",r.error].join("\t");
+    return[r.name,r.seq,r.nBases,r.mw,r.mwDMT,r.gcPct!=="N/A"?r.gcPct+"%":r.gcPct,r.epsilon||"N/A",r.tm!=="N/A"?r.tm+"°C":r.tm,r.tmMethod||""].join("\t");
+  });
+  const txt=[header,...rows].join("\n");
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=event.target;const orig=btn.textContent;btn.textContent="✓ Copié!";btn.style.color="#4ade80";
+    setTimeout(()=>{btn.textContent=orig;btn.style.color="";},2000);
+  }).catch(()=>alert("Impossible de copier. Essayez le bouton CSV."));
+}
+
+// ── DRAG & DROP / FILE IMPORT ─────────────────────────────────────────────────
+function dragOver(e){e.preventDefault();document.getElementById("drop-zone").classList.add("drag-over");}
+function dragLeave(e){document.getElementById("drop-zone").classList.remove("drag-over");}
+function dropFile(e){
+  e.preventDefault();
+  document.getElementById("drop-zone").classList.remove("drag-over");
+  const file=e.dataTransfer.files[0];
+  if(file)handleBatchFile(file);
+}
+function loadBatchFile(e){const f=e.target.files[0];if(f)handleBatchFile(f);e.target.value="";}
+
+function handleBatchFile(file){
+  const name=file.name.toLowerCase();
+  const isExcel=name.endsWith(".xlsx")||name.endsWith(".xls");
+  const reader=new FileReader();
+
+  if(isExcel){
+    reader.onload=ev=>{
+      try{
+        const wb=XLSX.read(ev.target.result,{type:"array"});
+        const ws=wb.Sheets[wb.SheetNames[0]];
+        const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:""});
+        const lines=data
+          .filter(row=>row.some(c=>String(c).trim()))
+          .map((row,i)=>{
+            const a=String(row[0]||"").trim();
+            const b=String(row[1]||"").trim();
+            if(b){return{name:a||"oligo"+(i+1),seq:b};}
+            else{return{name:"oligo"+(i+1),seq:a};}
+          }).filter(r=>r.seq);
+        if(!lines.length){alert("Aucune séquence trouvée dans le fichier.");return;}
+        // populate textarea for visibility
+        document.getElementById("batch-input").value=lines.map(l=>l.name+"\t"+l.seq).join("\n");
+        processBatch(lines);
+      }catch(ex){alert("Erreur lecture Excel : "+ex.message);}
+    };
+    reader.readAsArrayBuffer(file);
+  }else{
+    reader.onload=ev=>{
+      let text=ev.target.result;
+      // detect delimiter: tab > semicolon > comma
+      const delim=text.includes("\t")?"\t":text.includes(";")?";":",";
+      const lines=text.split("\n").map(l=>l.trim()).filter(l=>l).map((l,i)=>{
+        const parts=l.split(delim);
+        if(parts.length>=2){return{name:parts[0].trim()||"oligo"+(i+1),seq:parts[1].trim()};}
+        return{name:"oligo"+(i+1),seq:parts[0].trim()};
+      }).filter(r=>r.seq);
+      document.getElementById("batch-input").value=lines.map(l=>l.name+"\t"+l.seq).join("\n");
+      processBatch(lines);
+    };
+    reader.readAsText(file,"UTF-8");
+  }
+}
+
+// ── DB RENDER ─────────────────────────────────────────────────────────────────
+function renderDB(){
+  const search=(document.getElementById("db-search").value||"").toLowerCase();
+  const filter=document.getElementById("db-filter").value;
+  const types=["all",...new Set(Object.values(mods).map(m=>m.type))];
+  const sel=document.getElementById("db-filter");
+  const curVal=sel.value;
+  sel.innerHTML=types.map(t=>`<option value="${t}">${t==="all"?"Tous les types":t}</option>`).join("");
+  if(types.includes(curVal))sel.value=curVal;
+
+  const entries=Object.entries(mods).filter(([id,mod])=>{
+    const matchType=filter==="all"||mod.type===filter;
+    const matchSearch=!search||id.toLowerCase().includes(search)||mod.name.toLowerCase().includes(search);
+    return matchType&&matchSearch;
+  });
+  document.getElementById("db-count").textContent=entries.length+" entrées";
+  document.getElementById("mod-count").textContent=Object.keys(mods).length;
+
+  const rows=document.getElementById("db-rows");
+  rows.innerHTML="";
+  entries.forEach(([id,mod])=>{
+    const div=document.createElement("div");div.className="db-row";
+    const isDefault=!!DEFAULT_MODS[id];
+    div.innerHTML=`
+      <div style="color:${mod.color||"#94a3b8"};font-weight:600;font-size:12px">${esc(id)}</div>
+      <div style="color:var(--text2);font-size:12px;word-break:break-word">${esc(mod.name)}</div>
+      <div style="color:var(--accent);font-size:12px">${mod.mw}</div>
+      <div><span class="badge-type">${esc(mod.type)}</span>${mod.delta?'<span style="color:var(--purple2);font-size:10px;display:block;margin-top:2px">Δ</span>':''}</div>
+      <div style="display:flex;gap:5px">
+        <button class="btn-sec btn-small" onclick="startEdit('${esc(id)}')">✎</button>
+        ${!isDefault?`<button class="btn-danger" onclick="deleteMod('${esc(id)}')">✕</button>`:""}
+      </div>`;
+    rows.appendChild(div);
+  });
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+
+// ── ADD / EDIT ────────────────────────────────────────────────────────────────
+function startEdit(id){
+  const mod=mods[id];editingId=id;
+  document.getElementById("add-title").textContent="Modifier : "+id;
+  document.getElementById("f-id").value=id;document.getElementById("f-id").disabled=true;
+  document.getElementById("f-name").value=mod.name||"";document.getElementById("f-mw").value=mod.mw;
+  document.getElementById("f-formula").value=mod.formula||"";document.getElementById("f-type").value=mod.type||"custom";
+  document.getElementById("f-delta").checked=!!mod.delta;setColor(mod.color||"#94a3b8");
+  document.getElementById("add-error").classList.add("hidden");showTab("add",null);
+}
+
+function saveMod(){
+  const errEl=document.getElementById("add-error");errEl.classList.add("hidden");
+  const id=editingId||document.getElementById("f-id").value.trim();
+  const name=document.getElementById("f-name").value.trim();
+  const mwVal=parseFloat(document.getElementById("f-mw").value);
+  if(!id){showError(errEl,"L'identifiant est requis.");return;}
+  if(!name){showError(errEl,"Le nom est requis.");return;}
+  if(isNaN(mwVal)){showError(errEl,"Masse molaire invalide.");return;}
+  mods[id]={name,mw:mwVal,formula:document.getElementById("f-formula").value.trim(),
+    type:document.getElementById("f-type").value,delta:document.getElementById("f-delta").checked,
+    color:document.getElementById("f-color").value};
+  saveMods();editingId=null;showTab("db",null);renderDB();
+}
+
+function deleteMod(id){
+  if(DEFAULT_MODS[id]){alert("Impossible de supprimer une modification par défaut.");return;}
+  if(!confirm("Supprimer '"+id+"' ?"))return;
+  delete mods[id];saveMods();renderDB();
+}
+
+function setColor(c){document.getElementById("f-color").value=c;document.getElementById("f-color-txt").value=c;}
+function syncColor(v){if(/^#[0-9a-fA-F]{6}$/.test(v))document.getElementById("f-color").value=v;}
+
+// ── DB EXPORT / IMPORT ────────────────────────────────────────────────────────
+function exportDB(){
+  const blob=new Blob([JSON.stringify(mods,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download="oligo_modifications.json";a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function importDB(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{const data=JSON.parse(ev.target.result);mods={...mods,...data};saveMods();renderDB();
+      alert("Import réussi : "+Object.keys(data).length+" entrées.");}
+    catch{alert("Fichier JSON invalide.");}
+  };
+  reader.readAsText(file);e.target.value="";
+}
+
+// ── THEME ────────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const isLight = document.body.classList.toggle("light");
+  document.getElementById("theme-btn").textContent = isLight ? "🌙" : "☀️";
+  try{ localStorage.setItem("oligo_theme", isLight ? "light" : "dark"); }catch{}
+}
+function initTheme(){
+  try{
+    if(localStorage.getItem("oligo_theme")==="light"){
+      document.body.classList.add("light");
+      document.getElementById("theme-btn").textContent = "🌙";
+    }
+  }catch{}
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+saveMods();
+renderDB();
+detectWXYZ();
+initTheme();
+document.getElementById("seq-input").addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();calculate();}
+});
+</script>
+</body>
+</html>
